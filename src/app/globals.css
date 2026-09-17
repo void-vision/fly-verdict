@@ -14,6 +14,11 @@
   --serif: var(--font-serif-latin), var(--font-serif-sc), "Songti SC", Georgia, serif;
   --sans: var(--font-sans-latin), var(--font-sans-sc), "Helvetica Neue", Helvetica, sans-serif;
   --mono: var(--font-mono), ui-monospace, monospace;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --dur-micro: 150ms;
+  --dur-base: 250ms;
 }
 
 [data-theme="light"] {
@@ -62,11 +67,76 @@ a:hover {
   }
 }
 
+@keyframes fv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes fv-rise-lg {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes fv-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fv-settle {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* `from`-only keyframe: sweeps from neutral to the inline rotate() the element already has. */
+@keyframes fv-needle {
+  from {
+    transform: translate(220px, 200px) rotate(0deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Interaction states: respond instantly on hover, ease off over 150ms. */
+a,
+.fv-theme,
+.fv-btn-primary,
+.fv-btn-link,
+.fv-btn-block,
+.fv-btn-ghost {
+  transition-property: color, background-color, border-color, transform;
+  transition-duration: var(--dur-micro);
+  transition-timing-function: var(--ease-out);
+}
+
+a:hover,
+.fv-theme:hover,
+.fv-btn-primary:hover,
+.fv-btn-link:hover,
+.fv-btn-block:hover,
+.fv-btn-ghost:hover {
+  transition-duration: 0ms;
+}
+
+.fv-theme:active,
+.fv-btn-primary:active,
+.fv-btn-block:active,
+.fv-btn-ghost:active {
+  transform: scale(0.98);
+  transition-duration: 80ms;
 }
 
 .fv-wrap {
@@ -155,6 +225,26 @@ a:hover {
   max-width: 1360px;
   margin: 0 auto;
   width: 100%;
+}
+
+.fv-hero-in > * {
+  animation: fv-rise-lg 520ms var(--ease-out) backwards;
+}
+
+.fv-hero-in > :nth-child(1) { animation-delay: 60ms; }
+.fv-hero-in > :nth-child(2) { animation-delay: 110ms; }
+.fv-hero-in > :nth-child(3) { animation-delay: 160ms; }
+.fv-hero-in > :nth-child(4) { animation-delay: 210ms; }
+.fv-hero-in > :nth-child(5) { animation-delay: 260ms; }
+.fv-hero-in > :nth-child(6) { animation-delay: 310ms; }
+.fv-hero-in > :nth-child(7) { animation-delay: 360ms; }
+
+.fv-hero-foot {
+  animation: fv-fade 400ms var(--ease-out) 480ms backwards;
+}
+
+.fv-hero canvas {
+  animation: fv-fade 600ms var(--ease-out) backwards;
 }
 
 .fv-kicker {
@@ -486,6 +576,8 @@ a:hover {
   display: block;
   height: 2px;
   background: var(--verde);
+  transform-origin: left center;
+  transition: transform 160ms linear;
 }
 
 .fv-spikes {
@@ -499,6 +591,29 @@ a:hover {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   line-height: 1.85;
+}
+
+.fv-swap > * {
+  animation: fv-rise var(--dur-base) var(--ease-out) backwards;
+}
+
+.fv-swap > :nth-child(2) { animation-delay: 40ms; }
+.fv-swap > :nth-child(3) { animation-delay: 80ms; }
+.fv-swap > :nth-child(4) { animation-delay: 120ms; }
+.fv-swap > :nth-child(5) { animation-delay: 160ms; }
+.fv-swap > :nth-child(6) { animation-delay: 200ms; }
+
+.fv-overlay-in {
+  animation: fv-fade 220ms var(--ease-out) backwards;
+}
+
+.fv-dial-in {
+  animation: fv-settle 320ms var(--ease-out) 60ms backwards;
+}
+
+.fv-needle {
+  transform-origin: 0 0;
+  animation: fv-needle 600ms var(--ease-snappy) 180ms backwards;
 }
 
 .fv-cards {
@@ -532,6 +647,7 @@ a:hover {
 
 .fv-drop {
   outline: 1px dashed transparent;
+  transition: outline-color var(--dur-micro) var(--ease-out);
 }
 
 .fv-drop.is-over {

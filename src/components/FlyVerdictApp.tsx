@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { useFlySession } from "@/hooks/useFlySession";
+import { useLang } from "@/hooks/useLang";
 import { useMedia } from "@/hooks/useMedia";
 import { useTheme } from "@/hooks/useTheme";
 import { generateCNS, drawCloud } from "@/lib/viz/cns-cloud";
@@ -13,6 +14,7 @@ import { Truth } from "./Truth";
 
 export function FlyVerdictApp() {
   const theme = useTheme();
+  const { t, toggle: toggleLang } = useLang();
   const session = useFlySession();
   const setFps = session.setFps;
   const cloudRef = useRef<HTMLCanvasElement | null>(null);
@@ -95,6 +97,9 @@ export function FlyVerdictApp() {
         </div>
         <div className="fv-nav-meta">
           <span className="fv-nav-stat">MaleCNS · 166,691 N · 1.25×10⁸ SYN</span>
+          <button type="button" className="fv-theme" onClick={toggleLang} aria-label="切换语言 / Switch language">
+            {t.langToggle}
+          </button>
           <button type="button" className="fv-theme" onClick={theme.toggle}>
             {theme.isLight ? "DARK ↔" : "LIGHT ↔"}
           </button>
@@ -104,31 +109,31 @@ export function FlyVerdictApp() {
       <section className="fv-hero">
         <canvas ref={cloudRef} className="absolute inset-0 size-full pointer-events-none" />
         <div className="fv-hero-grid">
-          <div ref={textColRef}>
+          <div ref={textColRef} className="fv-hero-in">
             <div className="fv-kicker">
               <span className="fv-dot" />
               <span>SPECIMEN 001 · DROSOPHILA MELANOGASTER ♂</span>
             </div>
             <h1 className="fv-h1">
-              <span>让一只真实果蝇的</span>
-              <span>大脑来看你的脸</span>
+              <span>{t.hero.h1a}</span>
+              <span>{t.hero.h1b}</span>
             </h1>
-            <div className="fv-submark">FLY VERDICT · 蝇审</div>
+            <div className="fv-submark">{t.hero.submark}</div>
             <p className="fv-lede">
-              你的脸会被压成约 800 个六边形小眼的画面，送进按 MaleCNS 视觉通路简化出来的视叶子网络。我们只读它两条回路的放电强度：它想靠近你，还是想逃跑。
+              {t.hero.lede}
             </p>
             <div className="fv-cta-row">
               <a className="fv-btn-primary" href="#stage" style={{ borderBottom: "none" }}>
-                让果蝇看看你 →
+                {t.hero.cta}
               </a>
               <a className="fv-btn-link" href="#truth">
-                这是真的吗？
+                {t.hero.truthLink}
               </a>
             </div>
             <div className="fv-privacy">
               <span className="fv-privacy-k">PRIVACY</span>
               <span className="fv-privacy-v">
-                照片不会离开你的设备。没有服务器，一个字节都不上传。
+                {t.hero.privacy}
               </span>
             </div>
             <div className="fv-live">
@@ -139,7 +144,7 @@ export function FlyVerdictApp() {
                   <div style={{ color: "var(--verde)" }}>{pointCount.toLocaleString("en-US")}</div>
                 </div>
                 <div>
-                  <div className="fv-live-label">connectome</div>
+                  <div className="fv-live-label">modeled on</div>
                   <div style={{ color: "var(--ink-2)" }}>MaleCNS v1.0</div>
                 </div>
                 <div>
@@ -176,14 +181,14 @@ export function FlyVerdictApp() {
                   marginTop: 18,
                 }}
               >
-                图中点云为果蝇体态的程序化近似；复眼、翅与神经系统按真实结构分区着色，非逐神经元解剖坐标。
+                {t.hero.cloudNote}
               </div>
             </div>
           </div>
           <div aria-hidden />
         </div>
         <div className="fv-hero-foot">
-          <span>↓ 向下滚动，视角将推进至视叶</span>
+          <span>{t.hero.footLeft}</span>
           <span>OPTIC LOBE · MEDULLA · LOBULA PLATE</span>
         </div>
       </section>

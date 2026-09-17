@@ -93,7 +93,7 @@ export function useFlySession() {
     }
     setStage("loading");
     setLoad(0.04);
-    setLoadNote("正在唤醒果蝇");
+    setLoadNote("waking fly");
     const [landmarker, info] = await Promise.all([
       loadFaceLandmarker((fraction, label) => {
         setLoad(0.06 + fraction * 0.5);

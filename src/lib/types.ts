@@ -1,4 +1,5 @@
 export type ThemeName = "dark" | "light";
+export type Lang = "zh" | "en";
 
 export type StageKey =
   | "empty"
@@ -52,7 +53,8 @@ export type Verdict = {
   needleAngle: number;
   readout: SpikeReadout;
   seed: number;
-  line: string;
+  /** Which verdict line to show; resolved per language by `verdictLine`. */
+  lineIndex: number;
   landmarkCount: number;
   engine: "worker" | "main";
 };

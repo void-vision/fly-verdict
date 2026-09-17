@@ -1,5 +1,6 @@
 import { hexCells } from "./ommatidia";
-import type { OmmatidiaFrame, Verdict } from "./types";
+import { COPY, verdictLine } from "./copy";
+import type { Lang, OmmatidiaFrame, Verdict } from "./types";
 
 const COLOR = {
   escape: [232, 168, 96],
@@ -7,7 +8,12 @@ const COLOR = {
   hesitate: [178, 150, 230],
 } as const;
 
-export function downloadShareCard(verdict: Verdict, frame: OmmatidiaFrame | null, light: boolean) {
+export function downloadShareCard(
+  verdict: Verdict,
+  frame: OmmatidiaFrame | null,
+  light: boolean,
+  lang: Lang,
+) {
   const w = 1080;
   const h = 1920;
   const canvas = document.createElement("canvas");
@@ -74,16 +80,11 @@ export function downloadShareCard(verdict: Verdict, frame: OmmatidiaFrame | null
 
   ctx.fillStyle = `rgb(${accent[0]},${accent[1]},${accent[2]})`;
   ctx.font = "500 28px 'IBM Plex Mono', monospace";
-  const headline =
-    verdict.kind === "escape"
-      ? "它想逃跑 · ESCAPE"
-      : verdict.kind === "approach"
-        ? "它想靠近你 · APPROACH"
-        : "它没有决定 · HESITATE";
+  const headline = COPY[lang].share.cards.find((card) => card.kind === verdict.kind)!.headline;
   ctx.fillText(headline, 72, 1320);
   ctx.fillStyle = light ? "#231f1c" : "#f2ece2";
   ctx.font = "400 42px Newsreader, 'Noto Serif SC', serif";
-  wrapText(ctx, verdict.line, 72, 1390, w - 144, 58);
+  wrapText(ctx, verdictLine(lang, verdict), 72, 1390, w - 144, 58, lang === "en");
 
   ctx.strokeStyle = light ? "#cdc4b2" : "#3a3532";
   ctx.beginPath();
@@ -108,19 +109,21 @@ function wrapText(
   y: number,
   maxW: number,
   lineH: number,
+  byWord: boolean,
 ) {
-  const chars = [...text];
+  // CJK can break anywhere; Latin text must break between words.
+  const tokens = byWord ? text.split(/(?<= )/) : [...text];
   let line = "";
   let yy = y;
-  for (const ch of chars) {
-    const next = line + ch;
-    if (ctx.measureText(next).width > maxW) {
-      ctx.fillText(line, x, yy);
-      line = ch;
+  for (const token of tokens) {
+    const next = line + token;
+    if (line && ctx.measureText(next.trimEnd()).width > maxW) {
+      ctx.fillText(line.trimEnd(), x, yy);
+      line = token;
       yy += lineH;
     } else {
       line = next;
     }
   }
-  if (line) ctx.fillText(line, x, yy);
+  if (line) ctx.fillText(line.trimEnd(), x, yy);
 }

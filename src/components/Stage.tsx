@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { panelCopy, STATE_DEFS } from "@/lib/copy";
+import { useLang } from "@/hooks/useLang";
+import { panelCopy, stageMeta, verdictLine } from "@/lib/copy";
 import { downloadShareCard } from "@/lib/share-card";
 import { drawOmmatidiaEye } from "@/lib/viz/hex-eye";
 import type { FaceBox, OmmatidiaFrame, StageKey, Verdict } from "@/lib/types";
@@ -54,8 +55,10 @@ export function Stage({
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [over, setOver] = useState(false);
   const kind = verdict?.kind ?? "escape";
-  const copy = panelCopy(stage, kind);
-  const meta = STATE_DEFS.find((s) => s.key === stage)!;
+  const { lang, t } = useLang();
+  const copy = panelCopy(lang, stage, kind);
+  const meta = stageMeta(lang, stage);
+  const b = t.stage.buttons;
   const reducedRef = useRef(false);
 
   useEffect(() => {
@@ -89,11 +92,11 @@ export function Stage({
     <section id="stage" className="fv-section">
       <div className="fv-inner">
         <div className="fv-stage-head">
-          <h2 className="fv-h2">让果蝇看看你</h2>
+          <h2 className="fv-h2">{t.stage.h2}</h2>
           <div className="text-right font-[family-name:var(--mono)] text-[10.5px] leading-[1.9] tracking-[0.16em] text-[color:var(--ink-3)]">
             STAGE · {meta.code}
             <br />
-            <span className="text-[color:var(--verde)]">{meta.label}</span>
+            <span key={stage} className="fv-overlay-in text-[color:var(--verde)]">{meta.label}</span>
           </div>
         </div>
 
@@ -131,17 +134,20 @@ export function Stage({
               </>
             )}
             {stage === "result" && verdict && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-[color-mix(in_oklab,var(--bg)_84%,transparent)] px-10 backdrop-blur-[2px]">
+              <div className="fv-overlay-in absolute inset-0 flex flex-col items-center justify-center bg-[color-mix(in_oklab,var(--bg)_84%,transparent)] px-10 backdrop-blur-[2px]">
                 <div className="mb-[26px] text-center font-[family-name:var(--mono)] text-[10px] tracking-[0.2em] whitespace-nowrap text-[color:var(--ink-3)]">
                   VERDICT DIAL · spikes/200ms
                 </div>
-                <div className="w-full max-w-[440px]" style={{ perspective: 900 }}>
+                <div className="fv-dial-in w-full max-w-[440px]" style={{ perspective: 900 }}>
                   <div style={{ transform: "rotateX(54deg)", transformStyle: "preserve-3d" }}>
                     <svg viewBox="0 0 440 240" className="block w-full overflow-visible">
                       <path d="M40 200 A 180 180 0 0 1 400 200" fill="none" stroke="var(--line)" strokeWidth="18" />
                       <path d="M40 200 A 180 180 0 0 1 220 20" fill="none" stroke="var(--verde)" strokeWidth="18" opacity=".32" />
                       <path d="M220 20 A 180 180 0 0 1 400 200" fill="none" stroke="var(--amber)" strokeWidth="18" opacity=".32" />
-                      <g transform={`translate(220,200) rotate(${verdict.needleAngle})`}>
+                      <g
+                        className="fv-needle"
+                        style={{ transform: `translate(220px, 200px) rotate(${verdict.needleAngle}deg)` }}
+                      >
                         <line x1="0" y1="0" x2="0" y2="-168" stroke={NEEDLE[kind]} strokeWidth="3" />
                         <circle cx="0" cy="-168" r="7" fill={NEEDLE[kind]} />
                       </g>
@@ -150,14 +156,15 @@ export function Stage({
                   </div>
                 </div>
                 <div className="mt-[18px] flex w-full max-w-[480px] justify-between gap-5 font-[family-name:var(--mono)] text-[10.5px] tracking-[0.1em]">
-                  <span className="whitespace-nowrap text-[color:var(--verde)]">← 靠近 APPROACH</span>
-                  <span className="whitespace-nowrap text-[color:var(--amber)]">ESCAPE 逃跑 →</span>
+                  <span className="whitespace-nowrap text-[color:var(--verde)]">{t.stage.approach}</span>
+                  <span className="whitespace-nowrap text-[color:var(--amber)]">{t.stage.escape}</span>
                 </div>
               </div>
             )}
           </div>
 
           <aside className="fv-side">
+            <div key={stage} className="fv-swap contents">
             <div className="font-[family-name:var(--mono)] text-[10px] tracking-[0.2em] text-[color:var(--verde)]">
               {copy.kicker}
             </div>
@@ -170,7 +177,7 @@ export function Stage({
                   <span className="text-[color:var(--verde)]">{Math.round(progress * 100)}%</span>
                 </div>
                 <div className="fv-bar">
-                  <i style={{ width: `${Math.round(progress * 100)}%` }} />
+                  <i style={{ transform: `scaleX(${progress})` }} />
                 </div>
                 <div className="font-[family-name:var(--mono)] text-[9.5px] leading-[1.7] text-[color:var(--ink-3)]">
                   {stage === "loading"
@@ -213,58 +220,60 @@ export function Stage({
                   className="border-l-2 pl-4 font-[family-name:var(--serif)] text-[19px] leading-[1.5]"
                   style={{ borderColor: NEEDLE[kind] }}
                 >
-                  {verdict.line}
+                  {verdictLine(lang, verdict)}
                 </div>
               </>
             )}
+            </div>
             {error && (
               <div className="font-[family-name:var(--mono)] text-[11px] text-[color:var(--amber)]">
                 {error}
               </div>
             )}
             <div className="mt-auto flex flex-col gap-2.5">
+              <div key={stage} className="fv-swap flex flex-col gap-2.5">
               {stage === "empty" && (
                 <>
                   <button type="button" className="fv-btn-block" onClick={() => void startCamera()}>
-                    开启摄像头
+                    {b.camera}
                   </button>
                   <button type="button" className="fv-btn-ghost" onClick={() => fileRef.current?.click()}>
-                    上传照片
+                    {b.upload}
                   </button>
                 </>
               )}
               {stage === "permission" && (
                 <>
                   <button type="button" className="fv-btn-block" onClick={() => void startCamera()}>
-                    允许并继续
+                    {b.allow}
                   </button>
                   <button type="button" className="fv-btn-ghost" onClick={() => fileRef.current?.click()}>
-                    改为上传照片
+                    {b.uploadInstead}
                   </button>
                 </>
               )}
               {stage === "loading" && (
                 <button type="button" className="fv-btn-ghost" onClick={reset}>
-                  取消
+                  {b.cancel}
                 </button>
               )}
               {stage === "live" && (
                 <>
                   <button type="button" className="fv-btn-block" onClick={() => void capture()}>
-                    拍摄这一帧
+                    {b.capture}
                   </button>
                   <button type="button" className="fv-btn-ghost" onClick={reset}>
-                    关掉摄像头
+                    {b.closeCam}
                   </button>
                 </>
               )}
               {stage === "noface" && (
                 <>
                   <button type="button" className="fv-btn-block" onClick={() => void startCamera()}>
-                    重试
+                    {b.retry}
                   </button>
                   <button type="button" className="fv-btn-ghost" onClick={() => fileRef.current?.click()}>
-                    上传照片
+                    {b.upload}
                   </button>
                 </>
               )}
@@ -276,33 +285,34 @@ faces.map((face) => (
                     className="fv-btn-block"
                     onClick={() => void pickFace(face.id)}
                   >
-                    审第 {face.id + 1} 张
+                    {b.pickFace(face.id + 1)}
                   </button>
                 ))}
               {stage === "scanning" && (
                 <button type="button" className="fv-btn-ghost" onClick={reset}>
-                  中止
+                  {b.abort}
                 </button>
               )}
               {stage === "result" && (
                 <>
                   <button type="button" className="fv-btn-block" onClick={() => void replay()}>
-                    再看一次
+                    {b.replay}
                   </button>
                   <button
                     type="button"
                     className="fv-btn-ghost"
                     onClick={() => {
-                      if (verdict) downloadShareCard(verdict, frame, light);
+                      if (verdict) downloadShareCard(verdict, frame, light, lang);
                     }}
                   >
-                    生成分享卡
+                    {b.share}
                   </button>
                   <button type="button" className="fv-btn-ghost" onClick={reset}>
-                    换一张脸
+                    {b.reset}
                   </button>
                 </>
               )}
+              </div>
               <input
                 ref={fileRef}
                 type="file"
