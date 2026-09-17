@@ -43,7 +43,7 @@ type Copy = {
   };
   share: { h2: string; note1: string; note2: string; cards: Card[] };
   truth: { h2: string; p1: string; p2: string; notes: { k: string; v: string }[] };
-  footer: { source: string; privacy: string; attribution: string };
+  footer: { company: string; source: string };
   verdicts: Record<VerdictKind, ((latencyMs: number) => string)[]>;
 };
 
@@ -240,7 +240,7 @@ const ZH: Copy = {
       },
     ],
   },
-  footer: { source: "开源 / SOURCE", privacy: "隐私 / PRIVACY", attribution: "署名 / ATTRIBUTION" },
+  footer: { company: "出品 / VOID VISION", source: "开源 / SOURCE" },
   verdicts: {
     escape: [
       (ms) => `逃跑反射触发，用时 ${ms}ms。别往心里去，它对一片吐司也这样。`,
@@ -442,7 +442,7 @@ const EN: Copy = {
       },
     ],
   },
-  footer: { source: "SOURCE", privacy: "PRIVACY", attribution: "ATTRIBUTION" },
+  footer: { company: "BY VOID VISION", source: "SOURCE" },
   verdicts: {
     escape: [
       (ms) => `Escape reflex fired in ${ms}ms. Don't take it personally, it does this to toast.`,

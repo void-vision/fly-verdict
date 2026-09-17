@@ -12,14 +12,21 @@ export function SiteFooter() {
           <span>FLY VERDICT · 2026</span>
         </div>
         <div className="flex flex-wrap gap-[26px]">
-          <a href="https://github.com" className="border-none text-[color:var(--ink-3)] hover:text-[color:var(--ink)]">
+          <a
+            href="https://voidvision.ai/en"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-none text-[color:var(--ink-3)] hover:text-[color:var(--ink)]"
+          >
+            {t.footer.company}
+          </a>
+          <a
+            href="https://github.com/void-vision/fly-verdict"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-none text-[color:var(--ink-3)] hover:text-[color:var(--ink)]"
+          >
             {t.footer.source}
-          </a>
-          <a href="#truth" className="border-none text-[color:var(--ink-3)] hover:text-[color:var(--ink)]">
-            {t.footer.privacy}
-          </a>
-          <a href="#truth" className="border-none text-[color:var(--ink-3)] hover:text-[color:var(--ink)]">
-            {t.footer.attribution}
           </a>
         </div>
         <div className="max-w-[42ch] text-right">
