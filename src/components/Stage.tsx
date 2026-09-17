@@ -89,7 +89,7 @@ export function Stage({
     <section id="stage" className="fv-section">
       <div className="fv-inner">
         <div className="fv-stage-head">
-          <h2 className="fv-h2">让苍蝇看看你</h2>
+          <h2 className="fv-h2">让果蝇看看你</h2>
           <div className="text-right font-[family-name:var(--mono)] text-[10.5px] leading-[1.9] tracking-[0.16em] text-[color:var(--ink-3)]">
             STAGE · {meta.code}
             <br />

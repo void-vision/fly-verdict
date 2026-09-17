@@ -32,7 +32,7 @@ export function Truth() {
               被评价的是谁
             </div>
             <div className="font-[family-name:var(--sans)] text-sm leading-[1.8] text-[color:var(--ink-2)]">
-              这不是颜值打分。这里没有分数、没有百分比、没有排行榜。我们测量的是一只苍蝇的反射，不是你的脸。
+              这不是颜值打分。这里没有分数、没有百分比、没有排行榜。我们测量的是一只果蝇的反射，不是你的脸。
             </div>
           </div>
           <div className="bg-[color:var(--bg-2)] px-7 py-[26px]">

@@ -83,7 +83,7 @@ export function HowItSees({ light }: { light: boolean }) {
               <br />
               争夺同一副肌肉
             </h3>
-            <p>逃逸回路和转向靠近回路同时收到消息，谁的放电更强，就决定这只苍蝇走还是留。</p>
+            <p>逃逸回路和转向靠近回路同时收到消息，谁的放电更强，就决定这只果蝇走还是留。</p>
             <div className="border-t border-[color:var(--line)] pt-3.5 font-[family-name:var(--mono)] text-[10.5px] tracking-[0.08em] text-[color:var(--ink-3)]">
               escape latency ≈ 212 ms · descending neurons
             </div>

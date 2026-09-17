@@ -50,7 +50,7 @@ export function panelCopy(
     },
     loading: {
       kicker: "STATE 03 · LOADING",
-      title: "正在唤醒苍蝇",
+      title: "正在唤醒果蝇",
       body: "468 点人脸模型和视叶到下行神经元的接线表正在装入这个标签页。第一次大约 10MB，之后可以离线。一只真实果蝇孵化成虫需要九天。",
       foot: "MaleCNS 视觉通路子网络 · 可离线缓存 · 照片不出设备",
       eye: "connectome streaming · visual pathway",
@@ -58,7 +58,7 @@ export function panelCopy(
     noface: {
       kicker: "STATE 04 · NO FACE",
       title: "没看到脸",
-      body: "取景器里只有背景。苍蝇的逼近检测神经元需要一个正在放大的轮廓——请让脸占满框线内的区域。",
+      body: "取景器里只有背景。果蝇的逼近检测神经元需要一个正在放大的轮廓——请让脸占满框线内的区域。",
       foot: "detector: local MediaPipe Face Landmarker · 468 points · 0 faces",
       eye: "0 faces detected",
     },
@@ -80,7 +80,7 @@ export function panelCopy(
       kicker: "STATE 07 · VERDICT",
       title: titles[kind],
       body: "读数来自逃逸回路与转向靠近回路在同一个 200 毫秒窗口里的放电强度。指针落点就是两者之差。",
-      foot: "这不是颜值打分。被评价的是苍蝇。",
+      foot: "这不是颜值打分。被评价的是果蝇。",
       eye: "verdict locked · replay available",
     },
   };

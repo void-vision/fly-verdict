@@ -119,7 +119,7 @@ export function FlyVerdictApp() {
             </p>
             <div className="fv-cta-row">
               <a className="fv-btn-primary" href="#stage" style={{ borderBottom: "none" }}>
-                让苍蝇看看你 →
+                让果蝇看看你 →
               </a>
               <a className="fv-btn-link" href="#truth">
                 这是真的吗？
