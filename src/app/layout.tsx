@@ -1,0 +1,72 @@
+import type { Metadata } from "next";
+import { Archivo, IBM_Plex_Mono, Newsreader, Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import "./globals.css";
+
+const newsreader = Newsreader({
+  variable: "--font-serif-latin",
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  style: ["normal", "italic"],
+});
+
+const notoSerif = Noto_Serif_SC({
+  variable: "--font-serif-sc",
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+});
+
+const archivo = Archivo({
+  variable: "--font-sans-latin",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+const notoSans = Noto_Sans_SC({
+  variable: "--font-sans-sc",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
+const plex = IBM_Plex_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
+export const metadata: Metadata = {
+  title: "蝇审 FLY VERDICT",
+  description:
+    "让一只真实果蝇的大脑来看你的脸。照片不会离开你的设备。没有服务器，一个字节都不上传。",
+  manifest: "/manifest.webmanifest",
+  icons: { icon: "/icon.svg" },
+  appleWebApp: {
+    capable: true,
+    title: "蝇审",
+    statusBarStyle: "black-translucent",
+  },
+  openGraph: {
+    title: "蝇审 FLY VERDICT",
+    description: "照片不会离开你的设备。没有服务器，一个字节都不上传。",
+  },
+};
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html
+      lang="zh-CN"
+      data-theme="dark"
+      className={`${newsreader.variable} ${notoSerif.variable} ${archivo.variable} ${notoSans.variable} ${plex.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Apply the stored theme before paint so light-mode visitors don't see a dark flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("fly-verdict-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`,
+          }}
+        />
+      </head>
+      <body className="min-h-full">{children}</body>
+    </html>
+  );
+}
