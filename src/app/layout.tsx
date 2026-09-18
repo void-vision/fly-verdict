@@ -34,9 +34,9 @@ const plex = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "蝇审 FLY VERDICT",
+  title: "蝇审 FLY VERDICT · 果蝇颜值鉴定",
   description:
-    "今天由一只果蝇审判你的脸。它不懂美丑，只想知道你会不会扑过来。照片不会离开你的设备，一个字节都不上传。",
+    "今天由一只果蝇给你的颜值打分。817 个复眼像素，一颗迷你果蝇脑，看看你在它眼里值几分。照片不会离开你的设备，一个字节都不上传。",
   manifest: "/manifest.webmanifest",
   icons: { icon: "/icon.svg" },
   appleWebApp: {
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "蝇审 FLY VERDICT",
-    description: "今天由一只果蝇审判你的脸。一审终审，不接受上诉。",
+    description: "今天由一只果蝇给你的颜值打分。你在果蝇眼里值几分？",
   },
 };
 

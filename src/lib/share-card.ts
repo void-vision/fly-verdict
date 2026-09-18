@@ -1,5 +1,5 @@
 import { hexCells } from "./ommatidia";
-import { COPY, verdictLine } from "./copy";
+import { COPY, tierCopy, verdictLine } from "./copy";
 import type { Lang, OmmatidiaFrame, Verdict } from "./types";
 
 const COLOR = {
@@ -34,7 +34,7 @@ export function downloadShareCard(
   const cells = hexCells();
   const R = 360;
   const cx = w / 2;
-  const cy = 780;
+  const cy = 720;
   const accent = COLOR[verdict.kind];
   const lum = frame?.luminance;
   for (let i = 0; i < cells.length; i++) {
@@ -78,13 +78,31 @@ export function downloadShareCard(
     ctx.fill();
   }
 
-  ctx.fillStyle = `rgb(${accent[0]},${accent[1]},${accent[2]})`;
-  ctx.font = "500 28px 'IBM Plex Mono', monospace";
-  const headline = COPY[lang].share.cards.find((card) => card.kind === verdict.kind)!.headline;
-  ctx.fillText(headline, 72, 1320);
+  const accentCss = `rgb(${accent[0]},${accent[1]},${accent[2]})`;
+  const muted = light ? "#6c6459" : "#9c9489";
+  const score = COPY[lang].score;
+  ctx.fillStyle = muted;
+  ctx.font = "400 24px 'IBM Plex Mono', monospace";
+  ctx.fillText(score.label, 72, 1200);
+  ctx.fillStyle = accentCss;
+  ctx.font = "300 190px Newsreader, 'Noto Serif SC', serif";
+  const points = String(verdict.flyScore);
+  ctx.fillText(points, 64, 1380);
+  const pointsW = ctx.measureText(points).width;
+  ctx.fillStyle = muted;
+  ctx.font = "400 40px Newsreader, 'Noto Serif SC', serif";
+  ctx.fillText(score.unit, 64 + pointsW + 16, 1380);
   ctx.fillStyle = light ? "#231f1c" : "#f2ece2";
-  ctx.font = "400 42px Newsreader, 'Noto Serif SC', serif";
-  wrapText(ctx, verdictLine(lang, verdict), 72, 1390, w - 144, 58, lang === "en");
+  ctx.font = "400 34px Newsreader, 'Noto Serif SC', serif";
+  ctx.fillText(tierCopy(lang, verdict).title, 72, 1440);
+
+  ctx.fillStyle = accentCss;
+  ctx.font = "500 26px 'IBM Plex Mono', monospace";
+  const headline = COPY[lang].share.cards.find((card) => card.kind === verdict.kind)!.headline;
+  ctx.fillText(headline, 72, 1520);
+  ctx.fillStyle = light ? "#231f1c" : "#f2ece2";
+  ctx.font = "400 40px Newsreader, 'Noto Serif SC', serif";
+  wrapText(ctx, verdictLine(lang, verdict), 72, 1585, w - 144, 54, lang === "en");
 
   ctx.strokeStyle = light ? "#cdc4b2" : "#3a3532";
   ctx.beginPath();
@@ -98,7 +116,7 @@ export function downloadShareCard(
 
   const a = document.createElement("a");
   a.href = canvas.toDataURL("image/png");
-  a.download = `fly-verdict-${verdict.kind}.png`;
+  a.download = `fly-verdict-${verdict.flyScore}-${verdict.kind}.png`;
   a.click();
 }
 

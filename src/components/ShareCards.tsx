@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useLang } from "@/hooks/useLang";
-import { verdictLine } from "@/lib/copy";
+import { tierCopy, verdictLine } from "@/lib/copy";
 import type { Verdict } from "@/lib/types";
 import { drawShareMosaic } from "@/lib/viz/hex-eye";
 
@@ -57,6 +57,16 @@ export function ShareCards({ light, verdict }: { light: boolean; verdict: Verdic
               >
                 {card.headline}
               </div>
+              {verdict?.kind === card.kind && (
+                <div className="-mt-1 flex items-baseline gap-2 font-[family-name:var(--serif)] leading-none">
+                  <span className="text-[34px] tabular-nums" style={{ color: COLOR[card.kind] }}>
+                    {verdict.flyScore}
+                  </span>
+                  <span className="font-[family-name:var(--mono)] text-[9.5px] tracking-[0.14em] text-[color:var(--ink-3)]">
+                    {tierCopy(lang, verdict).title}
+                  </span>
+                </div>
+              )}
               <div className="-mt-1.5 font-[family-name:var(--serif)] text-[15.5px] leading-[1.38]">
                 {verdict?.kind === card.kind ? verdictLine(lang, verdict) : card.line}
               </div>

@@ -50,6 +50,8 @@ export type SpikeReadout = {
 export type Verdict = {
   kind: VerdictKind;
   score: number;
+  /** 1..99 "looks, to a fruit fly", see fly-score.ts */
+  flyScore: number;
   needleAngle: number;
   readout: SpikeReadout;
   seed: number;
