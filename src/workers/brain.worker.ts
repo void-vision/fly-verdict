@@ -1,7 +1,6 @@
 import { indexOutgoing, photoreceptorRates } from "../lib/circuit";
 import { decodeConnectome } from "../lib/connectome-codec";
 import { simulateCircuit } from "../lib/lif";
-import { normalizeLuminance } from "../lib/fly-score.mjs";
 import { verdictFromReadout } from "../lib/verdict";
 import type { VisualCircuit } from "../lib/circuit";
 
@@ -110,8 +109,7 @@ self.onmessage = (event: MessageEvent<BrainRequest>) => {
         post({ type: "progress", label: "LIF 200ms window", fraction: 0.7, received: 0, total: 0 });
         const rates = photoreceptorRates(luminance, graph);
         const readout = simulateCircuit(graph, rates, msg.seed);
-        const looks = simulateCircuit(graph, photoreceptorRates(normalizeLuminance(luminance), graph), msg.seed);
-        post({ type: "verdict", id: msg.id, verdict: verdictFromReadout(readout, looks, msg.seed) });
+        post({ type: "verdict", id: msg.id, verdict: verdictFromReadout(readout, msg.seed) });
       })
       .catch((err: unknown) => {
         post({ type: "error", id: msg.id, message: err instanceof Error ? err.message : "simulate failed" });

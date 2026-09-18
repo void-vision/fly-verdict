@@ -25,8 +25,6 @@ type Copy = {
     labels: Record<StageKey, string>;
     titles: Record<VerdictKind, string>;
     panels: Record<Exclude<StageKey, "result">, Panel> & { result: Omit<Panel, "title"> };
-    approach: string;
-    escape: string;
     buttons: {
       camera: string;
       upload: string;
@@ -47,7 +45,7 @@ type Copy = {
   truth: { h2: string; p1: string; p2: string; notes: { k: string; v: string }[] };
   footer: { company: string; source: string };
   verdicts: Record<VerdictKind, ((latencyMs: number) => string)[]>;
-  score: { label: string; unit: string };
+  score: { label: string; unit: string; reaction: string };
   /** Highest first; indexed by `flyTier`. */
   tiers: [Tier, Tier, Tier, Tier, Tier];
 };
@@ -58,6 +56,7 @@ const STAGE_CODES: Record<StageKey, string> = {
   loading: "03",
   live: "03b",
   noface: "04",
+  toosmall: "04b",
   multiface: "05",
   scanning: "06",
   result: "07",
@@ -115,6 +114,7 @@ const ZH: Copy = {
       loading: "果蝇起床中",
       live: "对视中",
       noface: "没找到脸",
+      toosmall: "离太远了",
       multiface: "不止一张脸",
       scanning: "鉴定中",
       result: "出分",
@@ -156,6 +156,13 @@ const ZH: Copy = {
         foot: "detector: local MediaPipe Face Landmarker · 468 points · 0 faces",
         eye: "0 faces detected",
       },
+      toosmall: {
+        kicker: "STATE 04B · TOO FAR",
+        title: "靠近一点",
+        body: "找到你了，但脸在画面里太小，五官的细节看不清，分数会不准。让脸占满虚线框再拍一次，或者换一张脸更大的照片。",
+        foot: "interpupillary distance below 75 px · landmarks too coarse to score",
+        eye: "face too small · move closer",
+      },
       multiface: {
         kicker: "STATE 05 · MULTIPLE FACES",
         title: "画面里不止一张脸",
@@ -172,13 +179,11 @@ const ZH: Copy = {
       },
       result: {
         kicker: "STATE 07 · SCORE",
-        body: "反应来自逃跑回路和转向回路在同一个 200 毫秒里的放电强度，指针落点就是两者之差。颜值分另跑一轮：先抹掉明暗和肤色，只留轮廓，再看它想不想逃。",
+        body: "反应来自逃跑回路和转向回路在同一个 200 毫秒里的放电强度。颜值分看的是五官：左右对不对称、比例匀不匀。远近、光线和肤色都不影响，正对镜头分数最稳。",
         foot: "这是果蝇的审美：817 个像素，不代表任何人类标准。",
         eye: "score locked · replay available",
       },
     },
-    approach: "← 靠近 APPROACH",
-    escape: "ESCAPE 逃跑 →",
     buttons: {
       camera: "开启摄像头",
       upload: "上传照片",
@@ -237,7 +242,7 @@ const ZH: Copy = {
       },
       {
         k: "分数怎么来的",
-        v: "是的，这里有颜值分，但打分的是一只果蝇。算分前我们会把画面的明暗和对比度拉平，所以肤色和打光不会加分也不会扣分。剩下的差别很小，主要看它那 200 毫秒的心情：同一张照片永远同分，换一张它可能就改主意了，真果蝇也是这样。没有排行榜，分数不出设备。",
+        v: "是的，这里有颜值分，但打分的是一只果蝇。分数来自 478 个面部关键点：左右是否对称、眼距和嘴宽等比例是否匀称，全部按瞳距换算，所以远近、光线和肤色不会加分也不会扣分。歪头或侧脸会被当成不对称。果蝇的反应则由它的神经回路决定。没有排行榜，分数不出设备。",
       },
       {
         k: "你的数据",
@@ -263,7 +268,7 @@ const ZH: Copy = {
       () => "它盯着你看了很久，最后什么也没做。这可能是果蝇能给出的最高尊重。",
     ],
   },
-  score: { label: "果蝇眼中的颜值", unit: "分" },
+  score: { label: "果蝇眼中的颜值", unit: "分", reaction: "果蝇反应" },
   tiers: [
     { title: "果蝇界顶流", line: "转向回路疯狂放电，它差点忘了自己是只果蝇。" },
     { title: "复眼里的高光", line: "817 个小眼同时亮了一下，这在果蝇界就算回头率了。" },
@@ -325,6 +330,7 @@ const EN: Copy = {
       loading: "fly waking up",
       live: "staring contest",
       noface: "no face",
+      toosmall: "too far",
       multiface: "multiple faces",
       scanning: "rating",
       result: "score",
@@ -366,6 +372,13 @@ const EN: Copy = {
         foot: "detector: local MediaPipe Face Landmarker · 468 points · 0 faces",
         eye: "0 faces detected",
       },
+      toosmall: {
+        kicker: "STATE 04B · TOO FAR",
+        title: "Come a little closer",
+        body: "Found you, but your face is too small in the frame to read your features, so the score would be off. Fill the dashed box and try again, or pick a photo where your face is bigger.",
+        foot: "interpupillary distance below 75 px · landmarks too coarse to score",
+        eye: "face too small · move closer",
+      },
       multiface: {
         kicker: "STATE 05 · MULTIPLE FACES",
         title: "More than one face in frame",
@@ -382,13 +395,11 @@ const EN: Copy = {
       },
       result: {
         kicker: "STATE 07 · SCORE",
-        body: "Its reaction comes from how hard the escape and turning circuits fire in the same 200 ms window. The needle marks the difference. The looks score gets its own run: brightness and skin tone are flattened out first, leaving only the outline.",
+        body: "Its reaction comes from how hard the escape and turning circuits fire in the same 200 ms window. The looks score reads your features: how symmetric, how well proportioned. Distance, lighting and skin tone don't count; face the camera for the steadiest score.",
         foot: "These are a fruit fly's beauty standards: 817 pixels, no human ones.",
         eye: "score locked · replay available",
       },
     },
-    approach: "← APPROACH",
-    escape: "ESCAPE →",
     buttons: {
       camera: "Turn on camera",
       upload: "Upload a photo",
@@ -447,7 +458,7 @@ const EN: Copy = {
       },
       {
         k: "WHERE THE SCORE COMES FROM",
-        v: "Yes, there's a looks score, but a fruit fly is doing the scoring. Before scoring we flatten brightness and contrast, so skin tone and lighting neither add nor subtract points. What's left is subtle, and mostly the fly's mood in that 200 ms: the same photo always gets the same score, a different one might change its mind, just like a real fly. No leaderboard, and the score never leaves your device.",
+        v: "Yes, there's a looks score, but a fruit fly is doing the scoring. It comes from 478 facial landmarks: left/right symmetry and proportions like eye spacing and mouth width, all measured relative to the distance between your pupils, so distance, lighting and skin tone neither add nor subtract points. A tilted or turned head reads as asymmetry. The fly's reaction comes from its neural circuit. No leaderboard, and the score never leaves your device.",
       },
       {
         k: "YOUR DATA",
@@ -473,7 +484,7 @@ const EN: Copy = {
       () => "It stared at you for a long time, then did nothing. That may be the highest respect a fruit fly can give.",
     ],
   },
-  score: { label: "LOOKS, TO A FRUIT FLY", unit: "/ 100" },
+  score: { label: "LOOKS, TO A FRUIT FLY", unit: "/ 100", reaction: "FLY'S REACTION" },
   tiers: [
     { title: "Fruit fly A-lister", line: "The turning circuit went wild. It nearly forgot it was a fly." },
     { title: "Compound-eye glow-up", line: "All 817 tiny eyes lit up at once. In fly terms, that's a head-turner." },

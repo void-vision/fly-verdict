@@ -1,4 +1,4 @@
-import { driveScore, flyScore } from "./fly-score.mjs";
+import { driveScore } from "./fly-score.mjs";
 import type { SpikeReadout, Verdict, VerdictKind } from "./types";
 
 /** Verdict lines per kind (see copy.ts); the photo hash picks one, so the same face always gets the same line. */
@@ -10,15 +10,16 @@ const NEEDLE: Record<VerdictKind, number> = {
   hesitate: 6,
 };
 
-/** `looks` is the run on `normalizeLuminance` input; see fly-score.mjs. */
-export function verdictFromReadout(readout: SpikeReadout, looks: SpikeReadout, seed: number): Verdict {
+/** The circuit decides the reaction; the looks score is added from landmarks on the main thread. */
+export type BrainVerdict = Omit<Verdict, "flyScore" | "geometry">;
+
+export function verdictFromReadout(readout: SpikeReadout, seed: number): BrainVerdict {
   const score = driveScore(readout);
   const kind: VerdictKind =
     Math.abs(score) < 0.12 ? "hesitate" : score > 0 ? "escape" : "approach";
   return {
     kind,
     score,
-    flyScore: flyScore(driveScore(looks)),
     needleAngle: NEEDLE[kind],
     readout,
     seed,

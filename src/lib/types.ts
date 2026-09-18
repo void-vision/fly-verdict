@@ -6,6 +6,7 @@ export type StageKey =
   | "permission"
   | "loading"
   | "noface"
+  | "toosmall"
   | "multiface"
   | "live"
   | "scanning"
@@ -50,8 +51,10 @@ export type SpikeReadout = {
 export type Verdict = {
   kind: VerdictKind;
   score: number;
-  /** 1..99 "looks, to a fruit fly", see fly-score.ts */
+  /** 40..99 "looks, to a fruit fly", from face geometry; see face-geometry.mjs */
   flyScore: number;
+  /** In interpupillary distances; null if the landmarks were unusable. */
+  geometry: { asymmetry: number; proportion: number } | null;
   needleAngle: number;
   readout: SpikeReadout;
   seed: number;

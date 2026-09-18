@@ -1,14 +1,14 @@
-import type { Verdict } from "./types";
+import type { BrainVerdict } from "./verdict";
 import type { BrainRequest, BrainResponse } from "@/workers/brain.worker";
 
 export type BrainClient = {
   ready: Promise<{ neurons: number; synapses: number }>;
-  simulate: (seed: number, luminance: Float32Array) => Promise<Verdict>;
+  simulate: (seed: number, luminance: Float32Array) => Promise<BrainVerdict>;
   terminate: () => void;
 };
 
 type Pending = {
-  resolve: (verdict: Verdict) => void;
+  resolve: (verdict: BrainVerdict) => void;
   reject: (err: Error) => void;
 };
 

@@ -94,10 +94,17 @@ a:hover {
   }
 }
 
-/* `from`-only keyframe: sweeps from neutral to the inline rotate() the element already has. */
-@keyframes fv-needle {
+/* `from`-only keyframe: sweeps from empty to the inline stroke-dashoffset the arc already has. */
+@keyframes fv-ring {
   from {
-    transform: translate(220px, 200px) rotate(0deg);
+    stroke-dashoffset: 100;
+  }
+}
+
+@keyframes fv-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
   }
 }
 
@@ -607,13 +614,16 @@ a:hover,
   animation: fv-fade 220ms var(--ease-out) backwards;
 }
 
-.fv-dial-in {
+.fv-ring-in {
   animation: fv-settle 320ms var(--ease-out) 60ms backwards;
 }
 
-.fv-needle {
-  transform-origin: 0 0;
-  animation: fv-needle 600ms var(--ease-snappy) 180ms backwards;
+.fv-ring-arc {
+  animation: fv-ring 1100ms var(--ease-snappy) 120ms backwards;
+}
+
+.fv-tier-in {
+  animation: fv-pop 360ms var(--ease-snappy) 1050ms backwards;
 }
 
 .fv-cards {

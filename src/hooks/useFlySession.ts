@@ -8,6 +8,7 @@ import { detectFaces, loadFaceLandmarker } from "@/lib/face";
 import { hashFloat32 } from "@/lib/hash";
 import { alignFace, canvasImageData, CANONICAL_SIZE } from "@/lib/normalize";
 import { encodeOmmatidia } from "@/lib/ommatidia";
+import { faceGeometry, geometryScore, MIN_IPD_PX } from "@/lib/face-geometry.mjs";
 import type { FaceBox, OmmatidiaFrame, StageKey, Verdict } from "@/lib/types";
 
 const MAX_UPLOAD_BYTES = 12 * 1024 * 1024;
@@ -120,6 +121,11 @@ export function useFlySession() {
 
   const runPipeline = useCallback(async (bitmap: ImageBitmap, face: FaceBox, live: () => void) => {
     live();
+    const geometry = faceGeometry(face.landmarks, bitmap.width, bitmap.height);
+    if (geometry && geometry.ipdPx < MIN_IPD_PX) {
+      setStage("toosmall");
+      return;
+    }
     setStage("scanning");
     setScan(0);
     const source = sourceRef.current ?? document.createElement("canvas");
@@ -162,7 +168,14 @@ export function useFlySession() {
     }
     live();
     setScan(1);
-    setVerdict({ ...next, landmarkCount: face.landmarks.length, engine });
+    setVerdict({
+      ...next,
+      // Unusable landmarks are rare (the face was just detected); give a middling score.
+      flyScore: geometry ? geometryScore(geometry) : 70,
+      geometry: geometry && { asymmetry: geometry.asymmetry, proportion: geometry.proportion },
+      landmarkCount: face.landmarks.length,
+      engine,
+    });
     setStage("result");
   }, []);
 

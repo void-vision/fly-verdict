@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "@/hooks/useLang";
-import { COPY, panelCopy, stageMeta, tierCopy, verdictLine } from "@/lib/copy";
+import { panelCopy, stageMeta, tierCopy, verdictLine } from "@/lib/copy";
 import { downloadShareCard } from "@/lib/share-card";
+import { flyTier } from "@/lib/fly-score.mjs";
 import { drawOmmatidiaEye } from "@/lib/viz/hex-eye";
 import type { FaceBox, OmmatidiaFrame, StageKey, Verdict } from "@/lib/types";
 import type { RefObject } from "react";
+import { ScoreRing, TIER_COLOR } from "./ScoreRing";
 
 type StageProps = {
   light: boolean;
@@ -134,42 +136,15 @@ export function Stage({
               </>
             )}
             {stage === "result" && verdict && (
-              <div className="fv-overlay-in absolute inset-0 flex flex-col items-center justify-center bg-[color-mix(in_oklab,var(--bg)_84%,transparent)] px-10 backdrop-blur-[2px]">
-                <div className="mb-[18px] text-center">
-                  <div className="font-[family-name:var(--mono)] text-[10px] tracking-[0.2em] whitespace-nowrap text-[color:var(--ink-3)]">
-                    {COPY[lang].score.label}
-                  </div>
-                  <div className="mt-1 flex items-baseline justify-center gap-2 font-[family-name:var(--serif)] leading-none">
-                    <span className="text-[72px] tabular-nums" style={{ color: NEEDLE[kind] }}>
-                      {verdict.flyScore}
-                    </span>
-                    <span className="text-[18px] text-[color:var(--ink-2)]">{COPY[lang].score.unit}</span>
-                  </div>
-                  <div className="mt-2 font-[family-name:var(--mono)] text-[11px] tracking-[0.14em] text-[color:var(--ink-2)]">
-                    {tierCopy(lang, verdict).title}
-                  </div>
-                </div>
-                <div className="fv-dial-in w-full max-w-[440px]" style={{ perspective: 900 }}>
-                  <div style={{ transform: "rotateX(54deg)", transformStyle: "preserve-3d" }}>
-                    <svg viewBox="0 0 440 240" className="block w-full overflow-visible">
-                      <path d="M40 200 A 180 180 0 0 1 400 200" fill="none" stroke="var(--line)" strokeWidth="18" />
-                      <path d="M40 200 A 180 180 0 0 1 220 20" fill="none" stroke="var(--verde)" strokeWidth="18" opacity=".32" />
-                      <path d="M220 20 A 180 180 0 0 1 400 200" fill="none" stroke="var(--amber)" strokeWidth="18" opacity=".32" />
-                      <g
-                        className="fv-needle"
-                        style={{ transform: `translate(220px, 200px) rotate(${verdict.needleAngle}deg)` }}
-                      >
-                        <line x1="0" y1="0" x2="0" y2="-168" stroke={NEEDLE[kind]} strokeWidth="3" />
-                        <circle cx="0" cy="-168" r="7" fill={NEEDLE[kind]} />
-                      </g>
-                      <circle cx="220" cy="200" r="9" fill="var(--ink)" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="mt-[18px] flex w-full max-w-[480px] justify-between gap-5 font-[family-name:var(--mono)] text-[10.5px] tracking-[0.1em]">
-                  <span className="whitespace-nowrap text-[color:var(--verde)]">{t.stage.approach}</span>
-                  <span className="whitespace-nowrap text-[color:var(--amber)]">{t.stage.escape}</span>
-                </div>
+              <div className="fv-overlay-in absolute inset-0 flex items-center justify-center bg-[color-mix(in_oklab,var(--bg)_84%,transparent)] px-10 backdrop-blur-[2px]">
+                <ScoreRing
+                  key={verdict.seed}
+                  score={verdict.flyScore}
+                  label={t.score.label}
+                  unit={t.score.unit}
+                  tier={tierCopy(lang, verdict).title}
+                  reaction={`${t.score.reaction} · ${t.stage.titles[kind]}`}
+                />
               </div>
             )}
           </div>
@@ -201,9 +176,17 @@ export function Stage({
               <>
                 <div className="fv-spikes">
                   <span className="text-[color:var(--ink-3)]">fly score</span>
-                  <span className="text-right" style={{ color: NEEDLE[kind] }}>
+                  <span className="text-right" style={{ color: TIER_COLOR[flyTier(verdict.flyScore)] }}>
                     {verdict.flyScore} / 100
                   </span>
+                  {verdict.geometry && (
+                    <>
+                      <span className="text-[color:var(--ink-3)]">asymmetry</span>
+                      <span className="text-right">{verdict.geometry.asymmetry.toFixed(3)} IPD</span>
+                      <span className="text-[color:var(--ink-3)]">proportion Δ</span>
+                      <span className="text-right">{verdict.geometry.proportion.toFixed(3)}</span>
+                    </>
+                  )}
                   <span className="text-[color:var(--ink-3)]">LPLC2 (looming)</span>
                   <span className="text-right text-[color:var(--amber)]">
                     {verdict.readout.lplc2} spikes
@@ -283,7 +266,7 @@ export function Stage({
                   </button>
                 </>
               )}
-              {stage === "noface" && (
+              {(stage === "noface" || stage === "toosmall") && (
                 <>
                   <button type="button" className="fv-btn-block" onClick={() => void startCamera()}>
                     {b.retry}

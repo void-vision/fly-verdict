@@ -47,6 +47,7 @@ export function drawOmmatidiaEye(
     opts.stage === "result" ||
     opts.stage === "live" ||
     opts.stage === "noface" ||
+    opts.stage === "toosmall" ||
     opts.stage === "multiface";
   const accent = ACCENT[opts.kind];
   const cells = hexCells(rings);
@@ -129,6 +130,16 @@ export function drawOmmatidiaEye(
     ctx.moveTo(cx - R, y);
     ctx.lineTo(cx + R, y);
     ctx.stroke();
+  }
+
+  if (opts.stage === "toosmall") {
+    // Where the face is now (solid, small) and where it should be (dashed, full).
+    ctx.strokeStyle = "rgba(232,168,96,.9)";
+    ctx.lineWidth = 1.2 * dpr;
+    ctx.strokeRect(cx - R * 0.12, cy - R * 0.15, R * 0.24, R * 0.3);
+    ctx.setLineDash([6 * dpr, 6 * dpr]);
+    ctx.strokeRect(cx - R * 0.3, cy - R * 0.36, R * 0.6, R * 0.72);
+    ctx.setLineDash([]);
   }
 
   if (opts.stage === "noface" || opts.stage === "multiface") {

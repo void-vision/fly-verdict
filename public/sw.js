@@ -1,4 +1,4 @@
-const CACHE = "fly-verdict-v6";
+const CACHE = "fly-verdict-v7";
 const PRECACHE = ["/", "/manifest.webmanifest", "/icon.svg", "/connectome.bin", "/brain.worker.js"];
 
 const local =
