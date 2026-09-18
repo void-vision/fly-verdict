@@ -34,6 +34,7 @@ const plex = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://fly.voidvision.ai"),
   title: "蝇审 FLY VERDICT · 果蝇颜值鉴定",
   description:
     "今天由一只果蝇给你的颜值打分。817 个复眼像素，一颗迷你果蝇脑，看看你在它眼里值几分。照片不会离开你的设备，一个字节都不上传。",
@@ -45,6 +46,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
   },
   openGraph: {
+    url: "/",
     title: "蝇审 FLY VERDICT",
     description: "今天由一只果蝇给你的颜值打分。你在果蝇眼里值几分？",
   },

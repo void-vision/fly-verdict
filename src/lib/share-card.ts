@@ -2,6 +2,9 @@ import { hexCells } from "./ommatidia";
 import { COPY, tierCopy, verdictLine } from "./copy";
 import type { Lang, OmmatidiaFrame, Verdict } from "./types";
 
+/** Printed on the downloadable card so a shared screenshot leads back here. */
+const SITE_HOST = "fly.voidvision.ai";
+
 const COLOR = {
   escape: [232, 168, 96],
   approach: [110, 214, 178],
@@ -113,6 +116,9 @@ export function downloadShareCard(
   ctx.font = "400 22px 'IBM Plex Mono', monospace";
   ctx.fillText("MaleCNS · CC-BY · photo never left the device", 72, 1770);
   ctx.fillText(`${verdict.readout.dnp09} / ${verdict.readout.dna02} spikes · 200ms`, 72, 1810);
+  ctx.fillStyle = accentCss;
+  ctx.font = "500 26px 'IBM Plex Mono', monospace";
+  ctx.fillText(SITE_HOST, w - 72 - ctx.measureText(SITE_HOST).width, 1810);
 
   const a = document.createElement("a");
   a.href = canvas.toDataURL("image/png");

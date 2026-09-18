@@ -85,7 +85,7 @@ export function ShareCards({ light, verdict }: { light: boolean; verdict: Verdic
                         ? `${verdict.readout.lplc2} spikes/200ms`
                         : card.metricVal}
                 </span>
-                <span>flyverdict.xyz</span>
+                <span>fly.voidvision.ai</span>
                 <span className="text-right">MaleCNS · CC-BY</span>
               </div>
             </article>
