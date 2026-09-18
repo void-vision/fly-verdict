@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, IBM_Plex_Mono, Newsreader, Noto_Sans_SC, Noto_Serif_SC } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -9,22 +9,10 @@ const newsreader = Newsreader({
   style: ["normal", "italic"],
 });
 
-const notoSerif = Noto_Serif_SC({
-  variable: "--font-serif-sc",
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
-});
-
 const archivo = Archivo({
   variable: "--font-sans-latin",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-});
-
-const notoSans = Noto_Sans_SC({
-  variable: "--font-sans-sc",
-  subsets: ["latin"],
-  weight: ["400", "500"],
 });
 
 const plex = IBM_Plex_Mono({
@@ -57,7 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="zh-CN"
       data-theme="dark"
-      className={`${newsreader.variable} ${notoSerif.variable} ${archivo.variable} ${notoSans.variable} ${plex.variable} h-full antialiased`}
+      className={`${newsreader.variable} ${archivo.variable} ${plex.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

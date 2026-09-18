@@ -2,6 +2,15 @@ import { hexCells } from "./ommatidia";
 import { COPY, tierCopy, verdictLine } from "./copy";
 import type { Lang, OmmatidiaFrame, Verdict } from "./types";
 
+/** The page's font stacks, so the card falls back to the same system Chinese fonts as the page. */
+function pageFonts() {
+  const css = getComputedStyle(document.documentElement);
+  return {
+    serif: css.getPropertyValue("--serif").trim() || "serif",
+    mono: css.getPropertyValue("--mono").trim() || "monospace",
+  };
+}
+
 /** Printed on the downloadable card so a shared screenshot leads back here. */
 const SITE_HOST = "fly.voidvision.ai";
 
@@ -24,13 +33,14 @@ export function downloadShareCard(
   canvas.height = h;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
+  const fonts = pageFonts();
   ctx.fillStyle = light ? "#efe9dd" : "#1c1917";
   ctx.fillRect(0, 0, w, h);
 
   ctx.fillStyle = light ? "#231f1c" : "#f2ece2";
-  ctx.font = "300 54px Newsreader, 'Noto Serif SC', serif";
+  ctx.font = `300 54px ${fonts.serif}`;
   ctx.fillText("蝇审", 72, 120);
-  ctx.font = "400 22px 'IBM Plex Mono', monospace";
+  ctx.font = `400 22px ${fonts.mono}`;
   ctx.fillStyle = light ? "#6c6459" : "#9c9489";
   ctx.fillText(verdict.kind.toUpperCase(), w - 72 - ctx.measureText(verdict.kind.toUpperCase()).width, 120);
 
@@ -85,26 +95,26 @@ export function downloadShareCard(
   const muted = light ? "#6c6459" : "#9c9489";
   const score = COPY[lang].score;
   ctx.fillStyle = muted;
-  ctx.font = "400 24px 'IBM Plex Mono', monospace";
+  ctx.font = `400 24px ${fonts.mono}`;
   ctx.fillText(score.label, 72, 1200);
   ctx.fillStyle = accentCss;
-  ctx.font = "300 190px Newsreader, 'Noto Serif SC', serif";
+  ctx.font = `300 190px ${fonts.serif}`;
   const points = String(verdict.flyScore);
   ctx.fillText(points, 64, 1380);
   const pointsW = ctx.measureText(points).width;
   ctx.fillStyle = muted;
-  ctx.font = "400 40px Newsreader, 'Noto Serif SC', serif";
+  ctx.font = `400 40px ${fonts.serif}`;
   ctx.fillText(score.unit, 64 + pointsW + 16, 1380);
   ctx.fillStyle = light ? "#231f1c" : "#f2ece2";
-  ctx.font = "400 34px Newsreader, 'Noto Serif SC', serif";
+  ctx.font = `400 34px ${fonts.serif}`;
   ctx.fillText(tierCopy(lang, verdict).title, 72, 1440);
 
   ctx.fillStyle = accentCss;
-  ctx.font = "500 26px 'IBM Plex Mono', monospace";
+  ctx.font = `500 26px ${fonts.mono}`;
   const headline = COPY[lang].share.cards.find((card) => card.kind === verdict.kind)!.headline;
   ctx.fillText(headline, 72, 1520);
   ctx.fillStyle = light ? "#231f1c" : "#f2ece2";
-  ctx.font = "400 40px Newsreader, 'Noto Serif SC', serif";
+  ctx.font = `400 40px ${fonts.serif}`;
   wrapText(ctx, verdictLine(lang, verdict), 72, 1585, w - 144, 54, lang === "en");
 
   ctx.strokeStyle = light ? "#cdc4b2" : "#3a3532";
@@ -113,11 +123,11 @@ export function downloadShareCard(
   ctx.lineTo(w - 72, 1720);
   ctx.stroke();
   ctx.fillStyle = light ? "#6c6459" : "#9c9489";
-  ctx.font = "400 22px 'IBM Plex Mono', monospace";
+  ctx.font = `400 22px ${fonts.mono}`;
   ctx.fillText("MaleCNS · CC-BY · photo never left the device", 72, 1770);
   ctx.fillText(`${verdict.readout.dnp09} / ${verdict.readout.dna02} spikes · 200ms`, 72, 1810);
   ctx.fillStyle = accentCss;
-  ctx.font = "500 26px 'IBM Plex Mono', monospace";
+  ctx.font = `500 26px ${fonts.mono}`;
   ctx.fillText(SITE_HOST, w - 72 - ctx.measureText(SITE_HOST).width, 1810);
 
   const a = document.createElement("a");

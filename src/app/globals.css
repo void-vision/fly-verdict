@@ -11,8 +11,12 @@
   --verde: oklch(0.74 0.115 168);
   --iris: oklch(0.74 0.115 300);
   --amber: oklch(0.74 0.125 52);
-  --serif: var(--font-serif-latin), var(--font-serif-sc), "Songti SC", Georgia, serif;
-  --sans: var(--font-sans-latin), var(--font-sans-sc), "Helvetica Neue", Helvetica, sans-serif;
+  /*
+   * Chinese falls through to system fonts on purpose: web CJK fonts were ~2.4 MB of
+   * slices that starved the JS on slow links (buttons dead for 13 s at 2 Mbps).
+   */
+  --serif: var(--font-serif-latin), "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun", Georgia, serif;
+  --sans: var(--font-sans-latin), "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "Helvetica Neue", Helvetica, sans-serif;
   --mono: var(--font-mono), ui-monospace, monospace;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
