@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { registerOfflineWorker } from "@/lib/asset-cache";
+import { prefetchAllowed, registerOfflineWorker } from "@/lib/asset-cache";
 import { simulateOnMain } from "@/lib/brain-main";
 import { createBrainClient, type BrainClient } from "@/lib/brain-client";
-import { detectFaces, loadFaceLandmarker } from "@/lib/face";
+import { detectFaces, loadFaceLandmarker, prefetchFaceAssets } from "@/lib/face";
 import { hashFloat32 } from "@/lib/hash";
 import { alignFace, canvasImageData, CANONICAL_SIZE } from "@/lib/normalize";
 import { encodeOmmatidia } from "@/lib/ommatidia";
@@ -75,8 +75,15 @@ export function useFlySession() {
 
   useEffect(() => {
     registerOfflineWorker();
+    // Start the ~6 MB model download while the visitor reads the page, not after they tap.
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
+    const cancelIdle = window.cancelIdleCallback ?? window.clearTimeout;
+    const prefetch = idle(() => {
+      if (prefetchAllowed()) prefetchFaceAssets();
+    });
     const runs = runRef;
     return () => {
+      cancelIdle(prefetch);
       runs.current++;
       stopCamera();
       brainRef.current?.terminate();
@@ -239,10 +246,12 @@ export function useFlySession() {
       if (video.videoWidth < 2 || video.videoHeight < 2) {
         throw new Error("camera produced an empty frame");
       }
-      await ensureEngine(live);
+      // The preview needs no model; keep downloading it while the user lines up the shot.
+      prefetchFaceAssets();
+      live();
       setStage("live");
     },
-    [ensureEngine, stopCamera],
+    [stopCamera],
   );
 
   const startCamera = useCallback(async () => {

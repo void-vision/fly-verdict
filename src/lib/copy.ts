@@ -145,7 +145,7 @@ const ZH: Copy = {
       loading: {
         kicker: "STATE 03 · LOADING",
         title: "正在叫醒果蝇",
-        body: "468 点人脸模型和一颗简化的果蝇视叶正在装进这个标签页。第一次大约 10MB，之后可以离线使用。一只真实果蝇从卵长到成虫要九天，你只需要等几秒。",
+        body: "468 点人脸模型和一颗简化的果蝇视叶正在装进这个标签页。第一次大约 6MB，网络慢时可能要多等一会儿，下完之后就能离线使用，再来不用重新下载。一只真实果蝇从卵长到成虫要九天，你只需要等这一次。",
         foot: "参考 MaleCNS 视觉通路 · 可离线缓存 · 照片不出设备",
         eye: "circuit loading · visual pathway",
       },
@@ -361,7 +361,7 @@ const EN: Copy = {
       loading: {
         kicker: "STATE 03 · LOADING",
         title: "Waking the fly",
-        body: "A 468-point face model and a simplified fly optic lobe are loading into this tab. About 10MB the first time, then it works offline. A real fruit fly takes nine days to grow from egg to adult. You only have to wait a few seconds.",
+        body: "A 468-point face model and a simplified fly optic lobe are loading into this tab. About 6MB the first time, which can take a while on a slow connection. After that it works offline and never downloads again. A real fruit fly takes nine days to grow from egg to adult. You only have to wait this once.",
         foot: "modeled on MaleCNS visual pathway · offline cache · photo stays on device",
         eye: "circuit loading · visual pathway",
       },

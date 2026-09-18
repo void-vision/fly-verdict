@@ -1,4 +1,5 @@
-import { cpSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { cpSync, existsSync, mkdirSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -28,3 +29,25 @@ if (!existsSync(model)) {
     console.log(`wrote ${model}`);
   }
 }
+
+// The face-blendshapes model (~0.95 MB) is only loaded when blendshapes are requested,
+// which this app never does. Dropping it is a quarter of the model download.
+if (existsSync(model)) {
+  const zip = spawnSync("zip", ["-d", model, "face_blendshapes.tflite"], { encoding: "utf8" });
+  if (zip.status === 0) console.log("stripped face_blendshapes.tflite from face_landmarker.task");
+  else if (zip.error) console.warn("zip not available; keeping face_blendshapes.tflite");
+}
+
+// Decoded sizes for download progress: a gzip/br Content-Length is the compressed size.
+const sizes = {};
+for (const file of [
+  "wasm/vision_wasm_internal.wasm",
+  "wasm/vision_wasm_internal.js",
+  "wasm/vision_wasm_nosimd_internal.wasm",
+  "wasm/vision_wasm_nosimd_internal.js",
+  "face_landmarker.task",
+]) {
+  const path = join(root, "public/mediapipe", file);
+  if (existsSync(path)) sizes[file] = statSync(path).size;
+}
+writeFileSync(join(root, "src/lib/mediapipe-sizes.json"), JSON.stringify(sizes, null, 2) + "\n");

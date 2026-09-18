@@ -1,0 +1,7 @@
+{
+  "wasm/vision_wasm_internal.wasm": 9574032,
+  "wasm/vision_wasm_internal.js": 204284,
+  "wasm/vision_wasm_nosimd_internal.wasm": 9448638,
+  "wasm/vision_wasm_nosimd_internal.js": 204137,
+  "face_landmarker.task": 2803154
+}

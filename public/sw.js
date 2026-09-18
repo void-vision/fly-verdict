@@ -1,4 +1,6 @@
-const CACHE = "fly-verdict-v7";
+const CACHE = "fly-verdict-v8";
+/** Model files, owned by src/lib/asset-cache.ts; they outlive deploys, so never purge them here. */
+const ASSETS_PREFIX = "fly-verdict-assets-";
 const PRECACHE = ["/", "/manifest.webmanifest", "/icon.svg", "/connectome.bin", "/brain.worker.js"];
 
 const local =
@@ -18,7 +20,11 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))))
+      .then((keys) =>
+        Promise.all(
+          keys.filter((key) => key !== CACHE && !key.startsWith(ASSETS_PREFIX)).map((key) => caches.delete(key)),
+        ),
+      )
       .then(() => self.clients.claim()),
   );
 });
@@ -54,8 +60,8 @@ self.addEventListener("fetch", (event) => {
   const path = url.pathname;
   if (local && path.startsWith("/_next/")) return;
 
-  const models =
-    path.startsWith("/mediapipe/") || path === "/connectome.bin" || path === "/brain.worker.js";
+  // /mediapipe/* is cached by asset-cache.ts; caching it here too would store 12 MB twice.
+  const models = path === "/connectome.bin" || path === "/brain.worker.js";
   const shell =
     path.endsWith(".webmanifest") ||
     path.endsWith(".svg") ||
